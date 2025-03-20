@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Clínica de Psicologia especializada em saúde mental com atendimento humanizado e personalizado.">
+    <meta name="keywords" content="psicologia, terapia, saúde mental, bem-estar, terapia cognitivo-comportamental">
+    <meta name="author" content="Clínica de Psicologia">
+    <title>Clínica de Psicologia - Bem-Estar Emocional</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --dark-bg: #212529;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        .navbar {
+            transition: background-color 0.3s ease;
+        }
+        .navbar.scrolled {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.pexels.com/photos/5217850/pexels-photo-5217850.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1') no-repeat center center/cover;
+            height: 90vh;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .hero-content {
+            padding: 3rem;
+            border-radius: 15px;
+            max-width: 800px;
+        }
+        .service-card {
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        /* Botão flutuante WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25D366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+        /* Estilo dos testemunhos */
+        .testimonial-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Clínica de Psicologia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#sobre">Sobre</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#servicos">Serviços</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#testemunhos">Testemunhos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contato">Contato</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content animate__animated animate__fadeIn">
+            <h1 class="display-4 fw-bold">Cuide da Sua Saúde Mental</h1>
+            <p class="lead my-3">Terapia especializada para o seu bem-estar emocional com atendimento humanizado.</p>
+            <a href="#contato" class="btn btn-primary btn-lg mt-3">Agende uma Consulta</a>
+        </div>
+    </header>
+
+    <section id="sobre" class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 order-md-2">
+                <h2 class="fw-bold">Sobre Nós</h2>
+                <p>Somos uma clínica dedicada à saúde mental, oferecendo atendimento humanizado e personalizado. Nossa equipe de profissionais qualificados está comprometida em promover o equilíbrio emocional e a qualidade de vida dos nossos pacientes.</p>
+                <a href="#contato" class="btn btn-outline-primary mt-2">Fale Conosco</a>
+            </div>
+            <div class="col-md-6 order-md-1 text-center">
+                <img src="https://images.pexels.com/photos/5217850/pexels-photo-5217850.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="img-fluid rounded shadow" alt="Sobre a Clínica">
+            </div>
+        </div>
+    </section>
+
+    <section id="servicos" class="bg-light py-5">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4">Nossos Serviços</h2>
+            <div class="row g-4">
+                <div class="col-md-4 d-flex">
+                    <div class="service-card animate__animated animate__fadeInLeft">
+                        <div>
+                            <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                            <h4 class="fw-semibold">Terapia Cognitivo-Comportamental</h4>
+                            <p>Abordagem prática para tratar ansiedade, depressão e outros desafios emocionais.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex">
+                    <div class="service-card animate__animated animate__fadeInUp">
+                        <div>
+                            <i class="fas fa-child fa-3x text-primary mb-3"></i>
+                            <h4 class="fw-semibold">Psicologia Infantil</h4>
+                            <p>Apoio especializado para o desenvolvimento emocional e comportamental de crianças.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex">
+                    <div class="service-card animate__animated animate__fadeInRight">
+                        <div>
+                            <i class="fas fa-user-friends fa-3x text-primary mb-3"></i>
+                            <h4 class="fw-semibold">Terapia de Casal</h4>
+                            <p>Fortalecimento de relações e resolução de conflitos de forma saudável.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testemunhos" class="container my-5">
+        <div class="text-center">
+            <h2 class="fw-bold mb-4">O Que Nossos Pacientes Dizem</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="testimonial-card animate__animated animate__fadeInLeft">
+                    <p>"A terapia mudou minha vida! Encontrei apoio e ferramentas para lidar com minha ansiedade."</p>
+                    <p class="fw-semibold mt-2">- Ana S., 34 anos</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card animate__animated animate__fadeInUp">
+                    <p>"O atendimento para meu filho foi incrível. Ele está mais confiante e feliz agora."</p>
+                    <p class="fw-semibold mt-2">- Mariana P., 42 anos</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card animate__animated animate__fadeInRight">
+                    <p>"A terapia de casal salvou nosso relacionamento. Recomendo muito!"</p>
+                    <p class="fw-semibold mt-2">- João e Carla, 38 e 36 anos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" class="container my-5 text-center">
+        <h2 class="fw-bold mb-4">Entre em Contato</h2>
+        <p>Agende sua consulta ou tire suas dúvidas agora mesmo.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form action="/submit" method="POST" class="p-4 bg-light rounded shadow">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="nome" placeholder="Seu Nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" name="email" placeholder="Seu E-mail" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="tel" class="form-control" name="telefone" placeholder="Seu Telefone" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" name="mensagem" rows="4" placeholder="Sua Mensagem" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-paper-plane"></i> Enviar</button>
+                </form>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="tel:+5511999999999" class="btn btn-success p-2"><i class="fas fa-phone me-2"></i>Ligue Agora</a>
+            <a href="mailto:contato@clinica.com" class="btn btn-primary"><i class="fas fa-envelope me-2"></i>Enviar E-mail</a>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white text-center py-4">
+        <p>© 2025 <a href="#">Clínica de Psicologia</a>. Todos os direitos reservados.</p>
+        <div class="mt-2">
+            <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-whatsapp fa-lg"></i></a>
+        </div>
+    </footer>
+
+    <!-- Botão Flutuante WhatsApp -->
+    <a href="https://wa.me/5511999999999" target="_blank" class="whatsapp-float">
+        <i class="fab fa-whatsapp fa-2x"></i>
+    </a>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script>
+        // Inicializa WOW.js para animações
+        new WOW().init();
+
+        // Efeito de scroll na navbar
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 50) {
+                $('.navbar').addClass('scrolled');
+            } else {
+                $('.navbar').removeClass('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

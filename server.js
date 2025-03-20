@@ -3,6 +3,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const path = require('path');
+const session = require('express-session'); // Adicione esta linha
 const app = express();
 const port = process.env.PORT || 3000;
 

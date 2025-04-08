@@ -5,7 +5,8 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const { createClient } = require('redis');
-const RedisStore = require('connect-redis')(session); // Nova sintaxe para connect-redis 7.x
+const connectRedis = require('connect-redis');
+const RedisStore = connectRedis.default;
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,8 +18,9 @@ const redisClient = createClient({
 redisClient.on('error', (err) => console.log('Erro no Redis:', err));
 redisClient.connect().then(() => console.log('Conectado ao Redis.'));
 
-// Log para verificar o SESSION_SECRET
+// Log para verificar o SESSION_SECRET e REDIS_URL
 console.log('SESSION_SECRET:', process.env.SESSION_SECRET || 'usando fallback');
+console.log('REDIS_URL:', process.env.REDIS_URL || 'usando localhost');
 
 // Configuração do Express
 app.set('view engine', 'ejs');

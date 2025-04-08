@@ -24,8 +24,10 @@ app.use(session({
         secure: process.env.NODE_ENV === 'production', 
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: 'lax'
-    }
+        sameSite: 'lax',
+        path: '/'
+    },
+    name: 'sessionId'
 }));
 
 const db = new sqlite3.Database('./messages.db', (err) => {
@@ -35,11 +37,8 @@ const db = new sqlite3.Database('./messages.db', (err) => {
 
 // Limpar o banco de dados e recriar as tabelas
 db.serialize(() => {
-    // Deletar tabelas existentes
     db.run(`DROP TABLE IF EXISTS messages`);
     db.run(`DROP TABLE IF EXISTS users`);
-
-    // Recriar tabelas
     db.run(`CREATE TABLE messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
@@ -65,7 +64,7 @@ db.serialize(() => {
 });
 
 function isAuthenticated(req, res, next) {
-    console.log('Verificando autenticação - loggedIn:', req.session.loggedIn, 'Session ID:', req.sessionID);
+    console.log('Verificando autenticação - loggedIn:', req.session.loggedIn, 'Session ID:', req.sessionID, 'Cookies:', req.headers.cookie);
     if (req.session.loggedIn) return next();
     res.redirect('/admin/login');
 }

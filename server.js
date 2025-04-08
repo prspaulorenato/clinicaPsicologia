@@ -20,7 +20,12 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback-secret-123',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production', 
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: 'lax'
+    }
 }));
 
 const db = new sqlite3.Database('./messages.db', (err) => {
@@ -28,8 +33,14 @@ const db = new sqlite3.Database('./messages.db', (err) => {
     console.log('Conectado ao banco de dados SQLite.');
 });
 
+// Limpar o banco de dados e recriar as tabelas
 db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS messages (
+    // Deletar tabelas existentes
+    db.run(`DROP TABLE IF EXISTS messages`);
+    db.run(`DROP TABLE IF EXISTS users`);
+
+    // Recriar tabelas
+    db.run(`CREATE TABLE messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
         email TEXT NOT NULL,
@@ -37,7 +48,7 @@ db.serialize(() => {
         mensagem TEXT NOT NULL,
         data TEXT DEFAULT CURRENT_TIMESTAMP
     )`);
-    db.run(`CREATE TABLE IF NOT EXISTS users (
+    db.run(`CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL,
         password TEXT NOT NULL
@@ -46,9 +57,9 @@ db.serialize(() => {
     const adminPass = 'Pauleta1984$$';
     bcrypt.hash(adminPass, 10, (err, hash) => {
         if (err) return console.error('Erro ao criar hash:', err);
-        db.run(`INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`, [adminUser, hash], (err) => {
+        db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [adminUser, hash], (err) => {
             if (err) console.error('Erro ao inserir admin:', err);
-            else console.log('Usuário admin criado ou já existe.');
+            else console.log('Usuário admin criado com sucesso.');
         });
     });
 });

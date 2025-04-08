@@ -5,16 +5,16 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const Knex = require('knex');
-const connectSessionKnex = require('connect-session-knex')(session); // Configurar connect-session-knex
+const connectSessionKnex = require('connect-session-knex')(session);
 const path = require('path');
 const app = express();
-const port = process.env.PORT || 8080; // Usar a porta fornecida pelo Render
+const port = process.env.PORT || 8080;
 
 // Configurar o Knex para usar SQLite
 const knex = Knex({
     client: 'sqlite3',
     connection: {
-        filename: './sessions.db' // Banco de dados para armazenar sessões
+        filename: './sessions.db'
     },
     useNullAsDefault: true
 });
@@ -22,7 +22,7 @@ const knex = Knex({
 // Configurar o store para sessões usando connect-session-knex
 const store = new connectSessionKnex({
     knex: knex,
-    tablename: 'sessions' // Nome da tabela para armazenar sessões
+    tablename: 'sessions'
 });
 
 // Log para verificar o SESSION_SECRET
@@ -34,7 +34,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware para logar cookies em todas as requisições
+// Middleware para logar cookies e cabeçalhos de resposta
 app.use((req, res, next) => {
     console.log('Cookies em todas as requisições:', req.headers.cookie);
     const originalSetHeader = res.setHeader;
@@ -48,13 +48,13 @@ app.use((req, res, next) => {
 });
 
 app.use(session({
-    store: store, // Usar connect-session-knex como store
+    store: store,
     secret: process.env.SESSION_SECRET || 'fallback-secret-123',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: process.env.NODE_ENV === 'production', // true no Render (HTTPS)
-        maxAge: 24 * 60 * 60 * 1000, // 24 horas
+        secure: false, // Desativar temporariamente para depuração
+        maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: 'lax',
         path: '/'

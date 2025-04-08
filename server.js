@@ -27,14 +27,21 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware para logar cookies em todas as requisições
+app.use((req, res, next) => {
+    console.log('Cookies em todas as requisições:', req.headers.cookie);
+    next();
+});
+
 app.use(session({
     store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET || 'fallback-secret-123',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: process.env.NODE_ENV === 'production', 
-        maxAge: 24 * 60 * 60 * 1000,
+        secure: process.env.NODE_ENV === 'production', // true no Render (HTTPS)
+        maxAge: 24 * 60 * 60 * 1000, // 24 horas
         httpOnly: true,
         sameSite: 'lax',
         path: '/'

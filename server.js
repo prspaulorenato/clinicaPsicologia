@@ -9,7 +9,7 @@ const connectRedis = require('connect-redis');
 const RedisStore = connectRedis.default;
 const path = require('path');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080; // Usar a porta fornecida pelo Render
 
 // Configurar cliente Redis
 const redisClient = createClient({
@@ -28,9 +28,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware para logar cookies em todas as requisições
+// Middleware para logar cookies e cabeçalhos de resposta
 app.use((req, res, next) => {
     console.log('Cookies em todas as requisições:', req.headers.cookie);
+    const originalSetHeader = res.setHeader;
+    res.setHeader = function (name, value) {
+        if (name.toLowerCase() === 'set-cookie') {
+            console.log('Set-Cookie Header:', value);
+        }
+        return originalSetHeader.call(this, name, value);
+    };
     next();
 });
 

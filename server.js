@@ -45,7 +45,7 @@ db.serialize(() => {
         password TEXT NOT NULL
     )`);
     const adminUser = 'admin';
-    const adminPass = 'senha123';
+    const adminPass = '489121'; // Senha corrigida
     bcrypt.hash(adminPass, 10, (err, hash) => {
         if (err) return console.error('Erro ao criar hash:', err);
         db.run(`INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`, [adminUser, hash], (err) => {
@@ -68,9 +68,13 @@ app.get('/', (req, res) => {
 
 app.post('/submit', (req, res) => {
     const { nome, email, telefone, mensagem } = req.body;
+    console.log('Recebendo mensagem:', { nome, email, telefone, mensagem });
     db.run(`INSERT INTO messages (nome, email, telefone, mensagem) VALUES (?, ?, ?, ?)`,
         [nome, email, telefone, mensagem], (err) => {
-            if (err) return res.send('Erro ao enviar mensagem.');
+            if (err) {
+                console.error('Erro ao salvar mensagem:', err);
+                return res.send('Erro ao enviar mensagem.');
+            }
             res.redirect('/#contato');
         });
 });
@@ -81,6 +85,7 @@ app.get('/admin/login', (req, res) => {
 });
 
 app.post('/admin/login', (req, res) => {
+    console.log('Recebendo POST /admin/login');
     const { username, password } = req.body;
     console.log('Tentativa de login:', { username });
     db.get(`SELECT * FROM users WHERE username = ?`, [username], (err, user) => {
@@ -101,13 +106,16 @@ app.post('/admin/login', (req, res) => {
                 console.log('Login bem-sucedido:', username);
                 req.session.loggedIn = true;
                 req.session.save((err) => {
-                    if (err) console.error('Erro ao salvar sessão:', err);
+                    if (err) {
+                        console.error('Erro ao salvar sessão:', err);
+                        return res.status(500).render('login', { error: 'Erro ao salvar sessão.' });
+                    }
                     console.log('Sessão após login - loggedIn:', req.session.loggedIn, 'Session ID:', req.sessionID);
                     res.redirect('/admin');
                 });
             } else {
                 console.log('Senha incorreta para:', username);
-                res.render('login', { error: 'Senha incorreta.' });
+                return res.render('login', { error: 'Senha incorreta.' });
             }
         });
     });
@@ -126,8 +134,12 @@ app.get('/admin', isAuthenticated, (req, res) => {
 
 app.post('/admin/delete/:id', isAuthenticated, (req, res) => {
     const id = req.params.id;
+    console.log('Deletando mensagem ID:', id);
     db.run(`DELETE FROM messages WHERE id = ?`, [id], (err) => {
-        if (err) return res.send('Erro ao deletar mensagem.');
+        if (err) {
+            console.error('Erro ao deletar mensagem:', err);
+            return res.send('Erro ao deletar mensagem.');
+        }
         res.redirect('/admin');
     });
 });

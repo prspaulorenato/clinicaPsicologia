@@ -4,17 +4,18 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const Redis = require('redis');
-const RedisStore = require('connect-redis').default;
+const { createClient } = require('redis');
+const RedisStore = require('connect-redis')(session); // Nova sintaxe para connect-redis 7.x
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Configurar cliente Redis
-const redisClient = Redis.createClient({
-    url: process.env.REDIS_URL || 'redis://red-xxxx:6379' // Substitua pela URL do seu Redis no Render
+const redisClient = createClient({
+    url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
-redisClient.connect().catch(err => console.error('Erro ao conectar ao Redis:', err));
+redisClient.on('error', (err) => console.log('Erro no Redis:', err));
+redisClient.connect().then(() => console.log('Conectado ao Redis.'));
 
 // Log para verificar o SESSION_SECRET
 console.log('SESSION_SECRET:', process.env.SESSION_SECRET || 'usando fallback');

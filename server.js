@@ -4,7 +4,6 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const SQLiteStore = require('connect-sqlite3')(session);
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,7 +17,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-    store: new SQLiteStore({ db: 'sessions.db', dir: './' }),
     secret: process.env.SESSION_SECRET || 'fallback-secret-123',
     resave: false,
     saveUninitialized: false,
@@ -45,7 +43,7 @@ db.serialize(() => {
         password TEXT NOT NULL
     )`);
     const adminUser = 'admin';
-    const adminPass = '489121'; // Senha corrigida
+    const adminPass = 'Pauleta1984$$';
     bcrypt.hash(adminPass, 10, (err, hash) => {
         if (err) return console.error('Erro ao criar hash:', err);
         db.run(`INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`, [adminUser, hash], (err) => {

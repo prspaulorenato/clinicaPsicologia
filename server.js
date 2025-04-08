@@ -4,23 +4,29 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const { createClient } = require('redis');
-const connectRedis = require('connect-redis');
-const RedisStore = connectRedis.default;
+const Knex = require('knex');
+const connectSessionKnex = require('connect-session-knex')(session); // Configurar connect-session-knex
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 8080; // Usar a porta fornecida pelo Render
 
-// Configurar cliente Redis
-const redisClient = createClient({
-    url: process.env.REDIS_URL || 'redis://localhost:6379'
+// Configurar o Knex para usar SQLite
+const knex = Knex({
+    client: 'sqlite3',
+    connection: {
+        filename: './sessions.db' // Banco de dados para armazenar sessões
+    },
+    useNullAsDefault: true
 });
-redisClient.on('error', (err) => console.log('Erro no Redis:', err));
-redisClient.connect().then(() => console.log('Conectado ao Redis.'));
 
-// Log para verificar o SESSION_SECRET e REDIS_URL
+// Configurar o store para sessões usando connect-session-knex
+const store = new connectSessionKnex({
+    knex: knex,
+    tablename: 'sessions' // Nome da tabela para armazenar sessões
+});
+
+// Log para verificar o SESSION_SECRET
 console.log('SESSION_SECRET:', process.env.SESSION_SECRET || 'usando fallback');
-console.log('REDIS_URL:', process.env.REDIS_URL || 'usando localhost');
 
 // Configuração do Express
 app.set('view engine', 'ejs');
@@ -28,7 +34,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware para logar cookies e cabeçalhos de resposta
+// Middleware para logar cookies em todas as requisições
 app.use((req, res, next) => {
     console.log('Cookies em todas as requisições:', req.headers.cookie);
     const originalSetHeader = res.setHeader;
@@ -42,7 +48,7 @@ app.use((req, res, next) => {
 });
 
 app.use(session({
-    store: new RedisStore({ client: redisClient }),
+    store: store, // Usar connect-session-knex como store
     secret: process.env.SESSION_SECRET || 'fallback-secret-123',
     resave: false,
     saveUninitialized: false,
@@ -58,7 +64,7 @@ app.use(session({
 
 const db = new sqlite3.Database('./messages.db', (err) => {
     if (err) console.error('Erro ao conectar ao banco:', err.message);
-    console.log('Conectado ao banco de dados SQLite.');
+    console.log('Conectado ao banco de dados SQLite (messages.db).');
 });
 
 // Limpar o banco de dados e recriar as tabelas

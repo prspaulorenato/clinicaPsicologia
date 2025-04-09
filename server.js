@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const Knex = require('knex');
 const connectSessionKnex = require('connect-session-knex')(session);
+const helmet = require('helmet'); // Adicionar helmet
+const csurf = require('csurf'); // Adicionar csurf
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 8080;
@@ -31,6 +33,7 @@ console.log('SESSION_SECRET:', process.env.SESSION_SECRET || 'usando fallback');
 // Configuração do Express
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use(helmet()); // Usar helmet para cabeçalhos seguros
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -53,7 +56,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: false, // Desativar temporariamente para depuração
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: 'lax',
@@ -61,6 +64,9 @@ app.use(session({
     },
     name: 'sessionId'
 }));
+
+// Configurar CSRF protection
+const csrfProtection = csurf({ cookie: false }); // CSRF não usará cookies
 
 const db = new sqlite3.Database('./messages.db', (err) => {
     if (err) console.error('Erro ao conectar ao banco:', err.message);
@@ -101,12 +107,12 @@ function isAuthenticated(req, res, next) {
     res.redirect('/admin/login');
 }
 
-app.get('/', (req, res) => {
+app.get('/', csrfProtection, (req, res) => {
     console.log('Acessando raiz');
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.render('index', { csrfToken: req.csrfToken() });
 });
 
-app.post('/submit', (req, res) => {
+app.post('/submit', csrfProtection, (req, res) => {
     const { nome, email, telefone, mensagem } = req.body;
     console.log('Recebendo mensagem:', { nome, email, telefone, mensagem });
     db.run(`INSERT INTO messages (nome, email, telefone, mensagem) VALUES (?, ?, ?, ?)`,
@@ -119,28 +125,28 @@ app.post('/submit', (req, res) => {
         });
 });
 
-app.get('/admin/login', (req, res) => {
+app.get('/admin/login', csrfProtection, (req, res) => {
     console.log('Acessando página de login');
-    res.render('login', { error: null });
+    res.render('login', { error: null, csrfToken: req.csrfToken() });
 });
 
-app.post('/admin/login', (req, res) => {
+app.post('/admin/login', csrfProtection, (req, res) => {
     console.log('Recebendo POST /admin/login');
     const { username, password } = req.body;
     console.log('Tentativa de login:', { username });
     db.get(`SELECT * FROM users WHERE username = ?`, [username], (err, user) => {
         if (err) {
             console.error('Erro no banco de dados:', err);
-            return res.status(500).render('login', { error: 'Erro interno.' });
+            return res.status(500).render('login', { error: 'Erro interno.', csrfToken: req.csrfToken() });
         }
         if (!user) {
             console.log('Usuário não encontrado:', username);
-            return res.render('login', { error: 'Usuário não encontrado.' });
+            return res.render('login', { error: 'Usuário não encontrado.', csrfToken: req.csrfToken() });
         }
         bcrypt.compare(password, user.password, (err, result) => {
             if (err) {
                 console.error('Erro ao comparar senha:', err);
-                return res.status(500).render('login', { error: 'Erro interno.' });
+                return res.status(500).render('login', { error: 'Erro interno.', csrfToken: req.csrfToken() });
             }
             if (result) {
                 console.log('Login bem-sucedido:', username);
@@ -148,14 +154,14 @@ app.post('/admin/login', (req, res) => {
                 req.session.save((err) => {
                     if (err) {
                         console.error('Erro ao salvar sessão:', err);
-                        return res.status(500).render('login', { error: 'Erro ao salvar sessão.' });
+                        return res.status(500).render('login', { error: 'Erro ao salvar sessão.', csrfToken: req.csrfToken() });
                     }
                     console.log('Sessão após login - loggedIn:', req.session.loggedIn, 'Session ID:', req.sessionID);
                     res.redirect('/admin');
                 });
             } else {
                 console.log('Senha incorreta para:', username);
-                return res.render('login', { error: 'Senha incorreta.' });
+                return res.render('login', { error: 'Senha incorreta.', csrfToken: req.csrfToken() });
             }
         });
     });
@@ -172,7 +178,7 @@ app.get('/admin', isAuthenticated, (req, res) => {
     });
 });
 
-app.post('/admin/delete/:id', isAuthenticated, (req, res) => {
+app.post('/admin/delete/:id', isAuthenticated, csrfProtection, (req, res) => {
     const id = req.params.id;
     console.log('Deletando mensagem ID:', id);
     db.run(`DELETE FROM messages WHERE id = ?`, [id], (err) => {
@@ -181,6 +187,16 @@ app.post('/admin/delete/:id', isAuthenticated, (req, res) => {
             return res.send('Erro ao deletar mensagem.');
         }
         res.redirect('/admin');
+    });
+});
+
+app.get('/admin/logout', isAuthenticated, (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Erro ao fazer logout:', err);
+            return res.redirect('/admin');
+        }
+        res.redirect('/admin/login');
     });
 });
 

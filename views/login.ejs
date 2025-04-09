@@ -5,34 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Admin</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
-        .login-container {
-            max-width: 400px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .error-message {
-            color: red;
-            margin-bottom: 15px;
-        }
-    </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2 class="text-center">Login - Admin</h2>
+    <div class="container mt-5">
+        <h2>Login - Área Administrativa</h2>
         <% if (error) { %>
-            <div class="error-message text-center"><%= error %></div>
+            <div class="alert alert-danger"><%= error %></div>
         <% } %>
         <form action="/admin/login" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="mb-3">
                 <label for="username" class="form-label">Usuário</label>
                 <input type="text" class="form-control" id="username" name="username" required>
@@ -41,7 +22,7 @@
                 <label for="password" class="form-label">Senha</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            <button type="submit" class="btn btn-primary">Entrar</button>
         </form>
     </div>
 </body>

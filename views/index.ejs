@@ -3,7 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Clínica de Psicologia especializada em saúde mental com atendimento humanizado e personalizado.">
+    <meta name="description" con<!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Clínica de Psicologia</title>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+    </head>
+    <body>
+        <!-- Seu HTML existente -->
+        <section id="contato" class="py-5">
+            <div class="container">
+                <h2 class="text-center mb-4">Entre em Contato</h2>
+                <form action="/submit" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefone" class="form-label">Telefone</label>
+                        <input type="text" class="form-control" id="telefone" name="telefone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mensagem" class="form-label">Mensagem</label>
+                        <textarea class="form-control" id="mensagem" name="mensagem" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+        </section>
+        <!-- Resto do seu HTML -->
+    </body>
+    </html>tent="Clínica de Psicologia especializada em saúde mental com atendimento humanizado e personalizado.">
     <meta name="keywords" content="psicologia, terapia, saúde mental, bem-estar, terapia cognitivo-comportamental">
     <meta name="author" content="Clínica de Psicologia">
     <title>Clínica de Psicologia - Bem-Estar Emocional</title>
@@ -200,31 +237,29 @@
         </div>
     </section>
 
-    <section id="contato" class="container my-5 text-center">
-        <h2 class="fw-bold mb-4">Entre em Contato</h2>
-        <p>Agende sua consulta ou tire suas dúvidas agora mesmo.</p>
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <form action="/submit" method="POST" class="p-4 bg-light rounded shadow">
-                    <div class="mb-3">
-                        <input type="text" class="form-control" name="nome" placeholder="Seu Nome" required>
-                    </div>
-                    <div class="mb-3">
-                        <input type="email" class="form-control" name="email" placeholder="Seu E-mail" required>
-                    </div>
-                    <div class="mb-3">
-                        <input type="tel" class="form-control" name="telefone" placeholder="Seu Telefone" required>
-                    </div>
-                    <div class="mb-3">
-                        <textarea class="form-control" name="mensagem" rows="4" placeholder="Sua Mensagem" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-paper-plane"></i> Enviar</button>
-                </form>
-            </div>
-        </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
-            <a href="tel:+5511999999999" class="btn btn-success p-2"><i class="fas fa-phone me-2"></i>Ligue Agora</a>
-            <a href="mailto:contato@clinica.com" class="btn btn-primary"><i class="fas fa-envelope me-2"></i>Enviar E-mail</a>
+    <section id="contato" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Entre em Contato</h2>
+            <form action="/submit" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="telefone" class="form-label">Telefone</label>
+                    <input type="text" class="form-control" id="telefone" name="telefone" required>
+                </div>
+                <div class="mb-3">
+                    <label for="mensagem" class="form-label">Mensagem</label>
+                    <textarea class="form-control" id="mensagem" name="mensagem" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
         </div>
     </section>
 

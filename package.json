@@ -10,11 +10,24 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "connect-session-knex": "^3.0.1",
+    "csurf": "^1.11.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.21.0",
     "express-session": "^1.18.0",
+    "helmet": "^8.1.0",
     "knex": "^3.1.0",
     "sqlite3": "^5.1.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prspaulorenato/clinicaPsicologia.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prspaulorenato/clinicaPsicologia/issues"
+  },
+  "homepage": "https://github.com/prspaulorenato/clinicaPsicologia#readme"
 }

@@ -6,13 +6,12 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const Knex = require('knex');
 const connectSessionKnex = require('connect-session-knex')(session);
-const helmet = require('helmet'); // Adicionar helmet
-const csurf = require('csurf'); // Adicionar csurf
+const helmet = require('helmet');
+const csurf = require('csurf');
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Configurar o Knex para usar SQLite
 const knex = Knex({
     client: 'sqlite3',
     connection: {
@@ -21,23 +20,19 @@ const knex = Knex({
     useNullAsDefault: true
 });
 
-// Configurar o store para sessões usando connect-session-knex
 const store = new connectSessionKnex({
     knex: knex,
     tablename: 'sessions'
 });
 
-// Log para verificar o SESSION_SECRET
 console.log('SESSION_SECRET:', process.env.SESSION_SECRET || 'usando fallback');
 
-// Configuração do Express
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(helmet()); // Usar helmet para cabeçalhos seguros
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware para logar cookies e cabeçalhos de resposta
 app.use((req, res, next) => {
     console.log('Cookies em todas as requisições:', req.headers.cookie);
     const originalSetHeader = res.setHeader;
@@ -55,7 +50,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback-secret-123',
     resave: false,
     saveUninitialized: false,
-    cookie: { 
+    cookie: {
         secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
@@ -65,15 +60,13 @@ app.use(session({
     name: 'sessionId'
 }));
 
-// Configurar CSRF protection
-const csrfProtection = csurf({ cookie: false }); // CSRF não usará cookies
+const csrfProtection = csurf({ cookie: false });
 
 const db = new sqlite3.Database('./messages.db', (err) => {
     if (err) console.error('Erro ao conectar ao banco:', err.message);
     console.log('Conectado ao banco de dados SQLite (messages.db).');
 });
 
-// Criação das tabelas apenas se não existirem e criação do admin se não existir
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,7 +81,6 @@ db.serialize(() => {
         username TEXT NOT NULL,
         password TEXT NOT NULL
     )`);
-    // Cria o usuário admin apenas se não existir
     db.get(`SELECT * FROM users WHERE username = ?`, ['admin'], (err, user) => {
         if (err) return console.error('Erro ao buscar admin:', err);
         if (!user) {
@@ -171,14 +163,17 @@ app.post('/admin/login', csrfProtection, (req, res) => {
     });
 });
 
-app.get('/admin', isAuthenticated, (req, res) => {
+app.get('/admin', isAuthenticated, csrfProtection, (req, res) => {
     console.log('Acessando admin');
     db.all(`SELECT * FROM messages ORDER BY data DESC`, [], (err, rows) => {
         if (err) {
             console.error('Erro ao carregar mensagens:', err);
             return res.send('Erro ao carregar mensagens.');
         }
-        res.render('admin', { messages: rows });
+        res.render('admin', {
+            messages: rows,
+            csrfToken: req.csrfToken()
+        });
     });
 });
 

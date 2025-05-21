@@ -202,3 +202,4 @@ app.get('/admin/logout', isAuthenticated, (req, res) => {
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });
+// ok

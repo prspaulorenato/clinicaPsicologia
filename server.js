@@ -73,11 +73,9 @@ const db = new sqlite3.Database('./messages.db', (err) => {
     console.log('Conectado ao banco de dados SQLite (messages.db).');
 });
 
-// Limpar o banco de dados e recriar as tabelas
+// Criação das tabelas apenas se não existirem e criação do admin se não existir
 db.serialize(() => {
-    db.run(`DROP TABLE IF EXISTS messages`);
-    db.run(`DROP TABLE IF EXISTS users`);
-    db.run(`CREATE TABLE messages (
+    db.run(`CREATE TABLE IF NOT EXISTS messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
         email TEXT NOT NULL,
@@ -85,19 +83,25 @@ db.serialize(() => {
         mensagem TEXT NOT NULL,
         data TEXT DEFAULT CURRENT_TIMESTAMP
     )`);
-    db.run(`CREATE TABLE users (
+    db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL,
         password TEXT NOT NULL
     )`);
-    const adminUser = 'admin';
-    const adminPass = 'Pauleta1984$$';
-    bcrypt.hash(adminPass, 10, (err, hash) => {
-        if (err) return console.error('Erro ao criar hash:', err);
-        db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [adminUser, hash], (err) => {
-            if (err) console.error('Erro ao inserir admin:', err);
-            else console.log('Usuário admin criado com sucesso.');
-        });
+    // Cria o usuário admin apenas se não existir
+    db.get(`SELECT * FROM users WHERE username = ?`, ['admin'], (err, user) => {
+        if (err) return console.error('Erro ao buscar admin:', err);
+        if (!user) {
+            const adminUser = 'admin';
+            const adminPass = 'Pauleta1984$$';
+            bcrypt.hash(adminPass, 10, (err, hash) => {
+                if (err) return console.error('Erro ao criar hash:', err);
+                db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [adminUser, hash], (err) => {
+                    if (err) console.error('Erro ao inserir admin:', err);
+                    else console.log('Usuário admin criado com sucesso.');
+                });
+            });
+        }
     });
 });
 
